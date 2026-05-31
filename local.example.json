@@ -1,0 +1,5 @@
+[
+  { "cliente":"María López", "contacto":"30111222", "color":"azul", "talle":"39", "cantidad":1, "fechaCompra":"2026-05-20", "despachado":false, "entregado":false },
+  { "cliente":"Carla Díaz", "contacto":"40222333", "color":"chocolate", "talle":"37", "cantidad":1, "fechaCompra":"2026-05-05", "despachado":true, "entregado":false },
+  { "cliente":"Sofía Ruiz", "contacto":"35444555", "color":"suela", "talle":"38", "cantidad":1, "fechaCompra":"2026-05-18", "despachado":false, "entregado":false }
+]
