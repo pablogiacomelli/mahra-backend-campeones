@@ -37,14 +37,29 @@ const LOCAL_SYNC_KEY = process.env.LOCAL_SYNC_KEY || '';
 
 app.use(express.json({ limit: '2mb' }));   // para leer el body JSON de n8n
 
-/* Solo permitimos que tu propia web llame a este backend (CORS).
-   Cambiá el origin por tu dominio real cuando publiques.                     */
-const ORIGEN_PERMITIDO = process.env.ORIGEN || 'https://mahra.com.ar';
+/* CORS: como la página se sirve desde este mismo backend, las consultas son
+   del mismo origen y no hay problema. Igual permitimos también tu tienda
+   (mahra.com.ar) por si alguna vez embebés la consulta desde ahí.
+   ORIGEN puede traer una lista separada por comas.                           */
+const ORIGENES = (process.env.ORIGEN || 'https://mahra.com.ar')
+  .split(',').map(s => s.trim()).filter(Boolean);
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', ORIGEN_PERMITIDO);
+  const origin = req.get('origin');
+  if (origin && ORIGENES.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else if (ORIGENES.length) {
+    res.setHeader('Access-Control-Allow-Origin', ORIGENES[0]);
+  }
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-mahra-key');
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
   next();
+});
+
+/* Servimos la página de seguimiento desde el propio backend.
+   El archivo index.html vive junto a este server.js.                         */
+app.get('/', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 /* Nombre del modelo de pre-venta que queremos mostrar lindo en la landing.
